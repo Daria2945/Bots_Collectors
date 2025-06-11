@@ -5,12 +5,18 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshObstacle))]
 public class Resource : MonoBehaviour
 {
-    private NavMeshObstacle _meshObstacle;
-    private Transform _transform;
+    private static int s_index = 0;
 
-    public bool IsAboveGround { get; private set; }
+    private Transform _transform;
+    private NavMeshObstacle _meshObstacle;
 
     public event Action<Resource> Destroyed;
+
+    public Vector3 StartPosition { get; private set; }
+
+    public int Index => s_index;
+
+    public bool IsGrounded { get; private set; } = true;
 
     private void Awake()
     {
@@ -18,18 +24,29 @@ public class Resource : MonoBehaviour
         _transform = transform;
     }
 
-    public void Reset()
-    {
-        IsAboveGround = false;
-        _transform.parent = null;
-    }
-
     public void InvokeEventDestroyed() =>
         Destroyed?.Invoke(this);
 
+    public void IncreaseIndex() =>
+        s_index++;
+
+    public void Reset()
+    {
+        transform.parent = null;
+        IsGrounded = true;
+    }
+
+    public void SetStartPosition(Vector3 startPosition)
+    {
+        transform.position = startPosition;
+        StartPosition = startPosition;
+
+        ActiviteNavMeshObstacle();
+    }
+
     public void Lift(Transform transformParent)
     {
-        IsAboveGround = true;
+        IsGrounded = false;
 
         _transform.SetParent(transformParent);
         _transform.position = transformParent.position;
@@ -37,7 +54,7 @@ public class Resource : MonoBehaviour
         DeactivateNavMeshObstacle();
     }
 
-    public void ActiviteNavMeshObstacle() =>
+    private void ActiviteNavMeshObstacle() =>
         _meshObstacle.enabled = true;
 
     private void DeactivateNavMeshObstacle() =>

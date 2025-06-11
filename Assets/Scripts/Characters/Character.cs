@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterMover))]
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, ICreatable
 {
     [SerializeField] private CharacterCollector _collector;
     [SerializeField] private AnimationSwicher _animationSwicher;
@@ -10,9 +10,11 @@ public class Character : MonoBehaviour
     private CharacterMover _mover;
 
     private Resource _resource;
-    private bool _hasResourceCollected;
+    private bool _isTakeResource;
 
     public event Action<Character> ReturnToStartPosition;
+
+    public Transform StartPosition => _mover.TransfornStartPosition;
 
     private void Awake()
     {
@@ -31,8 +33,14 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        if (_mover.IsWaitingInStartPosition && _hasResourceCollected)
+        if (_mover.IsWaitingInStartPosition && _isTakeResource)
             InvokeEventReturnToStartPosition();
+    }
+
+    public void SetNewStartPosition(Transform position)
+    {
+        _mover.SetStartPosition(position);
+        _mover.MoveToStartPosition();
     }
 
     public void SetTarget(Resource resource)
@@ -40,22 +48,21 @@ public class Character : MonoBehaviour
         _resource = resource;
 
         _collector.SetResourceTarget(resource);
-        _mover.MoveToTarget(resource.transform.position);
+        _mover.MoveToTarget(resource.StartPosition);
 
         _animationSwicher.Walk();
     }
 
     private void OnResourceCollected()
     {
-        _hasResourceCollected = true;
+        _isTakeResource = true;
 
-        _collector.DeleteResourceTarget();
         _mover.MoveToStartPosition();
     }
 
     private void InvokeEventReturnToStartPosition()
     {
-        _hasResourceCollected = false;
+        _isTakeResource = false;
 
         _animationSwicher.Idle();
 

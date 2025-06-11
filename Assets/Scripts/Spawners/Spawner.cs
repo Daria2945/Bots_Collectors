@@ -3,41 +3,48 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private ResourcePool _pool;
-    [SerializeField] private SpawnScaner _scaner;
-    [SerializeField] private float _delay;
+    [SerializeField] private ResourcePool _resourcePool;
+    [SerializeField] private PlaceManager _placeManager;
 
-    private void Start()
+    [SerializeField] private float _delaySpawn = 2f;
+
+    private void Awake()
     {
         StartCoroutine(Spawning());
     }
 
     private void Spawn()
     {
-        if (_scaner.TryGetFreePosition(out Vector3 spawnPosition))
-        {
-            var resource = _pool.GetResource();
+        if (_placeManager.TryGetFreePosition(out Vector3 spawnPosition) == false)
+            return;
 
-            resource.transform.position = spawnPosition;
-            resource.gameObject.SetActive(true);
+        var resource = _resourcePool.Get();
 
-            resource.Destroyed += ReturnInPool;
-        }
+        InitializeResourse(resource, spawnPosition);
     }
 
-    private void ReturnInPool(Resource resource)
+    private void InitializeResourse(Resource resource, Vector3 position)
     {
-        resource.Destroyed -= ReturnInPool;
+        resource.IncreaseIndex();
+        resource.SetStartPosition(position);
+        resource.gameObject.SetActive(true);
 
+        resource.Destroyed += PutInPool;
+    }
+
+    private void PutInPool(Resource resource)
+    {
+        resource.Destroyed -= PutInPool;
+
+        _placeManager.TryVacatePosition(resource.StartPosition);
         resource.gameObject.SetActive(false);
         resource.Reset();
-
-        _pool.PutResource(resource);
+        _resourcePool.Put(resource);
     }
 
     private IEnumerator Spawning()
     {
-        var wait = new WaitForSeconds(_delay);
+        var wait = new WaitForSecondsRealtime(_delaySpawn);
 
         while (enabled)
         {

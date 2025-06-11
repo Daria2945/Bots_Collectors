@@ -7,19 +7,17 @@ public class ResourcePool : MonoBehaviour
 
     private Queue<Resource> _resources = new();
 
-    public Resource GetResource()
+    public Resource Get()
     {
         if (_resources.Count == 0)
         {
-            var resource = Instantiate(_prefab);
-
-            return resource;
+            return Instantiate(_prefab);
         }
 
         return _resources.Dequeue();
     }
 
-    public void PutResource(Resource resource)
+    public void Put(Resource resource)
     {
         _resources.Enqueue(resource);
     }

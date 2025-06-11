@@ -31,11 +31,9 @@ public class CharacterCollector : MonoBehaviour
     public void SetResourceTarget(Resource resource) =>
         _target = resource;
 
-    public void DeleteResourceTarget() =>
-        _target = null;
-
     private void TakeResource(Resource resource)
     {
         resource.Lift(_transform);
+        _target = null;
     }
 }
