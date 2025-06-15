@@ -17,4 +17,18 @@ public class ResourceBalance : MonoBehaviour
         _value++;
         ValueChanged?.Invoke(_value);
     }
+
+    public bool TryRemove(int resourceCount)
+    {
+        if(resourceCount < 0)
+            return false;
+
+        if(resourceCount > _value)
+            return false;
+
+        _value -= resourceCount;
+        ValueChanged?.Invoke(_value);
+
+        return true;
+    }
 }

@@ -1,10 +1,10 @@
 public class CreateBotStrategy : CreateStrategy
 {
-    public CreateBotStrategy(Base @base, int requiedCountResource) : base(@base, requiedCountResource) { }
+    public CreateBotStrategy(Base @base, int costCraete, ResourceBalance balance) : base(@base, costCraete, balance) { }
 
-    public override void Create()
+    public override void TryCreate()
     {
-        Base.CreateBot();
-        ResetCurrentCountResource();
+        if (Balance.TryRemove(CostCreate))
+            Base.CreateBot();
     }
 }

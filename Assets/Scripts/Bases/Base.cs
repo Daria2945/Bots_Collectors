@@ -113,17 +113,10 @@ public class Base : MonoBehaviour, IInterectable, ICreatable
         else
         {
             _balance.Add();
-            _currentStrategy.AddResource();
             bot.PassOnResource();
 
-            TryCreate();
+            _currentStrategy.TryCreate();
         }
-    }
-
-    private void TryCreate()
-    {
-        if (_currentStrategy.CanCreate)
-            _currentStrategy.Create();
     }
 
     public void CreateBase()
@@ -149,11 +142,11 @@ public class Base : MonoBehaviour, IInterectable, ICreatable
 
     private void InitializeStrategy()
     {
-        int requiredCountResourceForCreateBase = 5;
-        int requiredCountResourceForCreateBot = 3;
+        int costCreateBase = 5;
+        int costForCreateBot = 3;
 
-        _createBaseStrategy = new(this, requiredCountResourceForCreateBase, _flag);
-        _createBotStrategy = new(this, requiredCountResourceForCreateBot);
+        _createBaseStrategy = new(this, costCreateBase, _balance, _flag);
+        _createBotStrategy = new(this, costForCreateBot, _balance);
 
         _currentStrategy = _createBotStrategy;
     }

@@ -1,23 +1,17 @@
 public abstract class CreateStrategy
 {
-    private readonly int _requiedCountResource;
-    private int _currentCountResource;
-
-    public CreateStrategy(Base @base, int requiedCountResource)
+    public CreateStrategy(Base @base, int costCraete, ResourceBalance balance)
     {
         Base = @base;
-        _requiedCountResource = requiedCountResource;
+        CostCreate = costCraete;
+        Balance = balance;
     }
-
-    public bool CanCreate => _currentCountResource >= _requiedCountResource;
 
     protected Base Base { get; private set; }
 
-    public abstract void Create();
+    protected int CostCreate {  get; private set; }
 
-    public void AddResource() =>
-        _currentCountResource++;
+    protected ResourceBalance Balance { get; private set; }
 
-    protected void ResetCurrentCountResource() =>
-        _currentCountResource = 0;
+    public abstract void TryCreate();
 }
