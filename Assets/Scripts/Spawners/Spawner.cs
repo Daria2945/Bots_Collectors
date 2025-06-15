@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour
 
     [SerializeField] private float _delaySpawn = 2f;
 
-    private void Awake()
+    private void Start()
     {
         StartCoroutine(Spawning());
     }

@@ -3,50 +3,47 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class Base : MonoBehaviour, IInterectable, ICreatable
 {
-    [SerializeField] private CharactersCollection _charactersCollection;
     [SerializeField] private Flag _flag;
+    [SerializeField] private BotCollection _bots;
     [SerializeField] private ResourceBalance _balance;
 
-    private InitializerBase _initialazer;
+    private InitializerBase _initializerBase;
     private ResourceServer _resourceServer;
 
-    private CreatorCharacter _creatorCharacter;
     private CreatorBase _creatorBase;
+    private CreatorBot _creatorBot;
 
-    private StateMachine _stateMachine = new();
-    private StateCreateBase _stateCreateBase;
-    private StateCreateCharacter _stateCreateCharacter;
-
-    public CharactersCollection CharactersCollection => _charactersCollection;
-
-    public Flag Flag => _flag;
-
-    public CreatorBase CreatorBase => _creatorBase;
-
-    public CreatorCharacter CreatorCharacter => _creatorCharacter;
-
-    public InitializerBase Inizializer => _initialazer;
+    private CreateBaseStrategy _createBaseStrategy;
+    private CreateBotStrategy _createBotStrategy;
+    private CreateStrategy _currentStrategy;
 
     private void OnDisable()
     {
         _resourceServer.AddedFreeResource -= SendToCollectResource;
+        _flag.Deactivated -= OnFlagDeactivate;
     }
 
-    private void Update()
+    public void Initialize(InitializerBase initializer, ResourceServer resourceServer, CreatorBot creatorBot, CreatorBase creatorBase)
     {
-        _stateMachine.Update();
-    }
-
-    public void Initialize(InitializerBase initializer, ResourceServer resourceServer, CreatorCharacter creatorCharacter, CreatorBase creatorBase)
-    {
-        _initialazer = initializer;
+        _initializerBase = initializer;
         _resourceServer = resourceServer;
-        _creatorCharacter = creatorCharacter;
+        _creatorBot = creatorBot;
         _creatorBase = creatorBase;
 
-        InitializeStates();
+        InitializeStrategy();
 
         _resourceServer.AddedFreeResource += SendToCollectResource;
+        _flag.Deactivated += OnFlagDeactivate;
+    }
+
+    public void AddNewBot(Bot bot)
+    {
+        _bots.TryGetFreePosition(out Vector3 freePosition);
+
+        _bots.AddNewBot(bot);
+
+        bot.SetNewStartPosition(freePosition);
+        bot.MoveToStartPosition();
     }
 
     public bool TryGetFlag(out Flag flag)
@@ -54,18 +51,35 @@ public class Base : MonoBehaviour, IInterectable, ICreatable
         int minCountCharacters = 2;
         flag = null;
 
-        if (_charactersCollection.CharactersCount < minCountCharacters)
+        if (_bots.BotsCount < minCountCharacters)
             return false;
 
         flag = _flag;
 
+        if (_currentStrategy != _createBaseStrategy)
+            ChangeStrategy();
+
         return true;
+    }
+
+    private void OnFlagDeactivate()
+    {
+        if (_currentStrategy != _createBotStrategy)
+            ChangeStrategy();
+    }
+
+    private void ChangeStrategy()
+    {
+        if (_currentStrategy == _createBotStrategy)
+            _currentStrategy = _createBaseStrategy;
+        else
+            _currentStrategy = _createBotStrategy;
     }
 
     private void SendToCollectResource()
     {
-        if (_resourceServer.FreeResourcesCount > _charactersCollection.FreeCharacretsCount)
-            DistributeRecources(_charactersCollection.FreeCharacretsCount);
+        if (_resourceServer.FreeResourcesCount > _bots.FreeBotsCount)
+            DistributeRecources(_bots.FreeBotsCount);
         else
             DistributeRecources(_resourceServer.FreeResourcesCount);
     }
@@ -77,36 +91,70 @@ public class Base : MonoBehaviour, IInterectable, ICreatable
             if (_resourceServer.TryGetFreeResourse(out Resource resource) == false)
                 return;
 
-            if (_charactersCollection.TryGetFreeCharacter(out Character character) == false)
+            if (_bots.TryGetFreeBot(out Bot bot) == false)
                 return;
 
-            character.SetTarget(resource);
-            character.ReturnToStartPosition += OnReturnToStartPosition;
+            bot.MoveToResource(resource);
+            bot.ReturnToStartPosition += TryTakeResource;
         }
     }
 
-    private void OnReturnToStartPosition(Character character)
+    private void TryTakeResource(Bot bot)
     {
-        character.ReturnToStartPosition -= OnReturnToStartPosition;
+        bot.ReturnToStartPosition -= TryTakeResource;
 
-        _charactersCollection.ReturnFreeCharacter(character);
+        if (_bots.TryReturnFreeBot(bot) == false)
+            return;
 
-        _stateMachine.CollectResource();
+        if (bot.HaveResource == false)
+        {
+            bot.Wait();
+        }
+        else
+        {
+            _balance.Add();
+            _currentStrategy.AddResource();
+            bot.PassOnResource();
 
-        _balance.Add();
+            TryCreate();
+        }
     }
 
-    private void InitializeStates()
+    private void TryCreate()
     {
-        int amountResourcesForCreateBase = 5;
-        int amountResourcesForCreateCharacter = 3;
+        if (_currentStrategy.CanCreate)
+            _currentStrategy.Create();
+    }
 
-        _stateCreateBase = new(amountResourcesForCreateBase, _stateMachine, this);
-        _stateCreateCharacter = new(amountResourcesForCreateCharacter, _stateMachine, this);
+    public void CreateBase()
+    {
+        Base newBase = _creatorBase.Create(_flag.CurrentPosition);
+        _initializerBase.InitializeBase(newBase);
+        _flag.Deactivate();
 
-        _stateMachine.AddState(_stateCreateBase);
-        _stateMachine.AddState(_stateCreateCharacter);
+        Bot bot = _bots.DeleteBot();
 
-        _stateMachine.SetState<StateCreateCharacter>();
+        newBase.AddNewBot(bot);
+    }
+
+    public void CreateBot()
+    {
+        if (_bots.TryGetFreePosition(out Vector3 createPosition) == false)
+            return;
+
+        Bot bot = _creatorBot.Create(createPosition);
+        bot.SetNewStartPosition(createPosition);
+        _bots.AddNewBot(bot);
+    }
+
+    private void InitializeStrategy()
+    {
+        int requiredCountResourceForCreateBase = 5;
+        int requiredCountResourceForCreateBot = 3;
+
+        _createBaseStrategy = new(this, requiredCountResourceForCreateBase, _flag);
+        _createBotStrategy = new(this, requiredCountResourceForCreateBot);
+
+        _currentStrategy = _createBotStrategy;
     }
 }

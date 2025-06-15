@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider), typeof(Rigidbody))]
-public class CharacterCollector : MonoBehaviour
+public class BotCollector : MonoBehaviour
 {
     private Transform _transform;
     private Resource _target;

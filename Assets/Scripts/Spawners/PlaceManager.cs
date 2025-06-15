@@ -8,7 +8,7 @@ public class PlaceManager : MonoBehaviour
     private List<Vector3> _freePosition = new();
     private List<Vector3> _occupiedPosition = new();
 
-    private void Awake()
+    public void FindFreePlace()
     {
         _placeFinder.FindFreePlace();
         _freePosition = new List<Vector3>(_placeFinder.FreePlace);

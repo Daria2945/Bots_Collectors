@@ -570,6 +570,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5137934541409966974}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4279237332905880308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5737323108154103314}
+  - component: {fileID: 7732373592690388394}
+  m_Layer: 6
+  m_Name: Buffer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5737323108154103314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4279237332905880308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6525896419062138527}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7732373592690388394
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4279237332905880308}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7, y: 1, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4548387940812116657
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,6 +812,7 @@ Transform:
   - {fileID: 2849335795841510693}
   - {fileID: 187008306753566739}
   - {fileID: 4117516001550647979}
+  - {fileID: 5737323108154103314}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &9074045256722145933
@@ -794,8 +848,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a555c4393ec7e543aeb44f553df3562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _charactersCollection: {fileID: 4786266704592242559}
   _flag: {fileID: 1941707835778113938}
+  _bots: {fileID: 4786266704592242559}
   _balance: {fileID: 5909286405898958573}
 --- !u!114 &4786266704592242559
 MonoBehaviour:
@@ -809,7 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aa509de69753624c8b1c4d59dea4c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _freePositionsForCharacters:
+  _transformFreePositions:
   - {fileID: 433244603154608830}
   - {fileID: 7495112090109006912}
   - {fileID: 3447280155328769639}

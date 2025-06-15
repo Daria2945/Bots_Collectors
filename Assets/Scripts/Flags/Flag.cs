@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(FlagMover))]
 public class Flag : MonoBehaviour
 {
     private Transform _transform;
+
+    public event Action Deactivated;
 
     public FlagMover Mover { get; private set; }
 
@@ -22,8 +25,11 @@ public class Flag : MonoBehaviour
     public void Activate() =>
         gameObject.SetActive(true);
 
-    public void Deactivate() =>
+    public void Deactivate()
+    {
         gameObject.SetActive(false);
+        Deactivated?.Invoke();
+    }
 
     public void Lift() =>
         IsGrounded = false;

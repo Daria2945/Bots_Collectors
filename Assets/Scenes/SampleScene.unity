@@ -691,7 +691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resourcePool: {fileID: 849950625}
   _placeManager: {fileID: 1516089592}
-  _delaySpawn: 1.5
+  _delaySpawn: 3
 --- !u!1 &637860737
 GameObject:
   m_ObjectHideFlags: 0
@@ -854,6 +854,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &715481409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 715481411}
+  - component: {fileID: 715481410}
+  m_Layer: 0
+  m_Name: Game
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &715481410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715481409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c0e4ecf8ef8804cb1494d690ce60e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _initializerBase: {fileID: 1665693792}
+  _placeManager: {fileID: 1516089592}
+--- !u!4 &715481411
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715481409}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &849950624
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,7 +1408,7 @@ GameObject:
   - component: {fileID: 1516089591}
   - component: {fileID: 1516089592}
   m_Layer: 0
-  m_Name: SpawnScaner
+  m_Name: PlaceManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1397,14 +1443,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxPositionX: 21
   _minPositionX: -21
-  _maxPositionZ: 14
-  _minPositionZ: -14
+  _maxPositionZ: 20
+  _minPositionZ: -13
   _startPositionYRay: 10
   _lengthRay: 20
   _layerMask:
     serializedVersion: 2
     m_Bits: 64
-  _spaceBetweenCentersOfObject: 4
+  _spaceBetweenCentersOfObject: 5
 --- !u!114 &1516089592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2161,3 +2207,4 @@ SceneRoots:
   - {fileID: 1665693793}
   - {fileID: 1043482328}
   - {fileID: 4771534931386310021}
+  - {fileID: 715481411}

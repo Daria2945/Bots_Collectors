@@ -9,8 +9,6 @@ public class LevelScaner : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Resource resource) && resource.IsGrounded)
-        {
             FindedResource?.Invoke(resource);
-        }
     }
 }
